@@ -13,9 +13,16 @@ const COLORS = {
 
 // Speed levels (in milliseconds per frame)
 const SPEEDS = {
-    easy: 250,
-    medium: 150,
-    hard: 100
+    level1: 200,
+    level2: 180,
+    level3: 160,
+    level4: 140,
+    level5: 120,
+    level6: 100,
+    level7: 90,
+    level8: 80,
+    level9: 70,
+    level10: 60
 };
 
 // Game States
@@ -28,7 +35,7 @@ const GAME_STATES = {
 
 // Game State
 let gameState = GAME_STATES.MENU;
-let currentSpeed = SPEEDS.medium;
+let currentSpeed = SPEEDS.level1;
 let gameLoop = null;
 let lastUpdateTime = 0;
 let isSoundEnabled = true;
@@ -110,12 +117,9 @@ function setupInputHandlers() {
     });
 
     // Speed selection
-    document.querySelectorAll('.speed-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentSpeed = SPEEDS[btn.dataset.speed];
-        });
+    const difficultySelect = document.getElementById('difficulty');
+    difficultySelect.addEventListener('change', () => {
+      currentSpeed = SPEEDS[difficultySelect.value];
     });
 
     // Start button
@@ -385,7 +389,7 @@ function activatePowerUp(powerUp) {
 
     if (powerUp.type === 'speed') {
         isInvincible = false;
-        currentSpeed = SPEEDS.medium;
+        currentSpeed = SPEEDS.level1;
     } else if (powerUp.type === 'invincible') {
         isInvincible = true;
         if (powerUpTimer) clearTimeout(powerUpTimer);

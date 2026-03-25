@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(start:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(cd:*)",
+      "mcp__ide__getDiagnostics"
     ]
   }
 }
