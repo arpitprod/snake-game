@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main Game Container -->
+    <div id="game-container">
+        <!-- Canvas for Game Rendering -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Heads Up Display -->
+        <div id="hud" class="hidden">
+            <div class="hud-left">
+                <span id="score-display">Score: 0</span>
+                <span id="high-score-display">High Score: 0</span>
+            </div>
+            <div class="hud-right">
+                <span id="level-display">Level: 1</span>
+                <span id="pause-btn" class="pause-indicator">⏸</span>
+            </div>
+        </div>
+
+        <!-- Start Menu -->
+        <div id="start-menu" class="menu-overlay">
+            <div class="menu-content">
+                <h1 class="game-title">🐍 SNAKE</h1>
+                <p class="game-subtitle">Eat food, grow, survive!</p>
+
+                <div class="speed-selection">
+                    <h3>Select Speed:</h3>
+                    <div class="speed-options">
+                        <button class="speed-btn" data-speed="easy">Easy</button>
+                        <button class="speed-btn active" data-speed="medium">Medium</button>
+                        <button class="speed-btn" data-speed="hard">Hard</button>
+                    </div>
+                </div>
+
+                <button id="start-btn" class="primary-btn">Start Game</button>
+
+                <div class="menu-footer">
+                    <label class="sound-toggle">
+                        <input type="checkbox" id="sound-toggle" checked>
+                        <span>🔊 Sound On</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over" class="menu-overlay hidden">
+            <div class="menu-content">
+                <h2 class="game-over-title">Game Over!</h2>
+                <div class="final-score">
+                    <p>Final Score: <span id="final-score">0</span></p>
+                    <p>Level Reached: <span id="final-level">1</span></p>
+                </div>
+
+                <div id="new-high-score" class="high-score-announcement hidden">
+                    🎉 New High Score! 🎉
+                </div>
+
+                <button id="restart-btn" class="primary-btn">Play Again</button>
+
+                <div class="menu-footer">
+                    <button id="back-menu-btn" class="secondary-btn">Main Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Controls -->
+        <div id="mobile-controls" class="mobile-controls hidden">
+            <button class="control-btn up" data-direction="up">▲</button>
+            <button class="control-btn left" data-direction="left">◀</button>
+            <button class="control-btn down" data-direction="down">▼</button>
+            <button class="control-btn right" data-direction="right">▶</button>
+            <button class="control-btn pause-mobile" data-pause="true">⏸</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
