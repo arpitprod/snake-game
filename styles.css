@@ -119,6 +119,71 @@ select {
     border: 1px solid rgba(0, 255, 136, 0.3);
 }
 
+/* Power-up Notifications */
+.powerup-notifications {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.powerup-notification {
+    background: rgba(0, 0, 0, 0.9);
+    padding: 15px 25px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    animation: slideDown 0.3s ease, fadeOut 0.5s ease 2.5s forwards;
+    pointer-events: auto;
+    max-width: 300px;
+    border: 2px solid;
+}
+
+.powerup-notification.speed {
+    border-color: #00d4ff;
+}
+
+.powerup-notification.invincible {
+    border-color: #ff00ff;
+}
+
+.powerup-icon {
+    font-size: 2rem;
+}
+
+.powerup-content {
+    text-align: left;
+}
+
+.powerup-content h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.powerup-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.speed .powerup-content h3 {
+    color: #00d4ff;
+}
+
+.invincible .powerup-content h3 {
+    color: #ff00ff;
+}
+
 #pause-btn {
     pointer-events: auto;
     background: rgba(0, 0, 0, 0.8);
@@ -415,6 +480,26 @@ select {
     }
     50% {
         transform: scale(1.05);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
     }
 }
 

@@ -296,18 +296,19 @@ function moveSnake() {
     // Add new head
     snake.unshift(head);
 
+    // Check power-up collision
+    const powerUpIndex = powerUps.findIndex(p => p.x === head.x && p.y === head.y);
+    if (powerUpIndex !== -1) {
+        activatePowerUp(powerUps[powerUpIndex]);
+        showPowerUpNotification(powerUps[powerUpIndex]);
+        powerUps.splice(powerUpIndex, 1);
+    }
+
     // Check food collision
     if (head.x === food.x && head.y === food.y) {
         score += 10 * level;
         playSound('eat');
         spawnFood();
-
-        // Check power-up collision
-        const powerUpIndex = powerUps.findIndex(p => p.x === head.x && p.y === head.y);
-        if (powerUpIndex !== -1) {
-            activatePowerUp(powerUps[powerUpIndex]);
-            powerUps.splice(powerUpIndex, 1);
-        }
 
         // Level up every 50 points
         if (score > 0 && score % 50 === 0) {
@@ -391,12 +392,47 @@ function spawnPowerUp() {
     }
 }
 
+// Show Power-up Notification
+function showPowerUpNotification(powerUp) {
+    const container = document.getElementById('powerup-notifications');
+    if (!container) return;
+
+    const notification = document.createElement('div');
+    notification.className = `powerup-notification ${powerUp.type}`;
+
+    if (powerUp.type === 'speed') {
+        notification.innerHTML = `
+            <div class="powerup-icon">⚡</div>
+            <div class="powerup-content">
+                <h3>⚡ SPEED BOOST!</h3>
+                <p>Snake moves super fast for 5 seconds</p>
+            </div>
+        `;
+    } else if (powerUp.type === 'invincible') {
+        notification.innerHTML = `
+            <div class="powerup-icon">🛡️</div>
+            <div class="powerup-content">
+                <h3>🛡️ INVINCIBLE!</h3>
+                <p>You can't die for 5 seconds - flash the screen!</p>
+            </div>
+        `;
+    }
+
+    container.appendChild(notification);
+
+    // Remove notification after 3 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 3000);
+}
+
 // Activate Power-up
 function activatePowerUp(powerUp) {
     playSound('powerup');
 
     if (powerUp.type === 'speed') {
-        isInvincible = false;
         currentSpeed = SPEEDS.level1;
     } else if (powerUp.type === 'invincible') {
         isInvincible = true;
