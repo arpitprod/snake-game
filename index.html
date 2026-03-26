@@ -13,14 +13,14 @@
         <canvas id="gameCanvas"></canvas>
 
         <!-- Heads Up Display -->
-        <div id="hud" class="hidden">
+        <div id="hud">
             <div class="hud-left">
                 <span id="score-display">Score: 0</span>
                 <span id="high-score-display">High Score: 0</span>
             </div>
             <div class="hud-right">
                 <span id="level-display">Level: 1</span>
-                <span id="pause-btn" class="pause-indicator">⏸</span>
+                <button id="pause-btn" class="hud-btn">⏸ Pause</button>
             </div>
         </div>
 
@@ -80,14 +80,29 @@
             </div>
         </div>
 
+        <!-- Pause Menu -->
+        <div id="pause-menu" class="menu-overlay hidden">
+            <div class="menu-content">
+                <h2 class="game-title">⏸ PAUSED</h2>
+                <p class="game-subtitle">Game is currently paused</p>
+
+                <button id="pause-resume" class="primary-btn">Resume</button>
+
+                <div class="menu-footer">
+                    <button id="pause-restart" class="secondary-btn">Restart</button>
+                    <button id="pause-quit" class="secondary-btn">Quit</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Mobile Controls -->
         <div id="mobile-controls" class="mobile-controls hidden">
             <button class="control-btn up" data-direction="up">▲</button>
             <button class="control-btn left" data-direction="left">◀</button>
             <button class="control-btn down" data-direction="down">▼</button>
             <button class="control-btn right" data-direction="right">▶</button>
-            <button class="control-btn pause-mobile" data-pause="true">⏸</button>
         </div>
+
     </div>
 
     <script src="game.js"></script>

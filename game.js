@@ -65,6 +65,7 @@ const startMenu = document.getElementById('start-menu');
 const gameOverScreen = document.getElementById('game-over');
 const mobileControls = document.getElementById('mobile-controls');
 const pauseBtn = document.getElementById('pause-btn');
+const pauseMenu = document.getElementById('pause-menu');
 
 // Initialize Game
 function init() {
@@ -105,17 +106,6 @@ function setupInputHandlers() {
         });
     });
 
-    // Mobile pause button
-    document.querySelectorAll('.control-btn[data-pause]').forEach(btn => {
-        btn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            togglePause();
-        });
-        btn.addEventListener('click', () => {
-            togglePause();
-        });
-    });
-
     // Speed selection
     const difficultySelect = document.getElementById('difficulty');
     difficultySelect.addEventListener('change', () => {
@@ -139,6 +129,24 @@ function setupInputHandlers() {
 
     // Pause button
     pauseBtn.addEventListener('click', togglePause);
+
+    // Pause menu buttons
+    document.getElementById('pause-resume').addEventListener('click', () => {
+        if (gameState === GAME_STATES.PAUSED) {
+            togglePause();
+        }
+    });
+    document.getElementById('pause-restart').addEventListener('click', () => {
+        if (gameState === GAME_STATES.PAUSED) {
+            togglePause();
+            startGame();
+        }
+    });
+    document.getElementById('pause-quit').addEventListener('click', () => {
+        if (gameState === GAME_STATES.PAUSED) {
+            backToMenu();
+        }
+    });
 }
 
 // Handle Keyboard Input
@@ -458,11 +466,13 @@ function togglePause() {
         gameState = GAME_STATES.PAUSED;
         cancelAnimationFrame(gameLoop);
         pauseBtn.textContent = '▶';
+        pauseMenu.classList.remove('hidden');
     } else if (gameState === GAME_STATES.PAUSED) {
         gameState = GAME_STATES.PLAYING;
         lastUpdateTime = performance.now();
         gameLoop = requestAnimationFrame(update);
         pauseBtn.textContent = '⏸';
+        pauseMenu.classList.add('hidden');
     }
 }
 
@@ -613,15 +623,6 @@ function render() {
         }
     }
 
-    // Draw pause overlay
-    if (gameState === GAME_STATES.PAUSED) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 3rem Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
-    }
 }
 
 // Render Start Menu

@@ -98,6 +98,10 @@ select {
     align-items: center;
     z-index: 50;
     pointer-events: none;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
 .hud-left, .hud-right {
@@ -105,6 +109,7 @@ select {
     gap: 20px;
     font-size: 1.2rem;
     font-weight: bold;
+    align-items: center;
 }
 
 #score-display, #high-score-display, #level-display {
@@ -114,15 +119,21 @@ select {
     border: 1px solid rgba(0, 255, 136, 0.3);
 }
 
-#pause-btn, .pause-mobile {
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
+#pause-btn {
+    pointer-events: auto;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-size: 1.1rem;
     cursor: pointer;
-    font-size: 1.2rem;
-    transition: all 0.2s;
+    transition: all 0.3s;
+    color: #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
 }
 
 #pause-btn:hover, .pause-mobile:hover {
@@ -130,7 +141,57 @@ select {
     border-color: #00ff88;
 }
 
-/* Menu Buttons */
+/* Pause Menu */
+#pause-menu {
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 150;
+}
+
+#pause-menu .menu-content {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #ffd700;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+}
+
+#pause-menu h2 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(45deg, #ffd700, #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+#pause-menu .game-subtitle {
+    margin-bottom: 2rem;
+    color: #fff;
+}
+
+#pause-menu .primary-btn {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    background: linear-gradient(45deg, #ffd700, #ff8c00);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+}
+
+#pause-menu .primary-btn:hover {
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+}
+
+#pause-menu .secondary-btn {
+    margin: 5px;
+    font-size: 1rem;
+    padding: 12px 30px;
+}
+
+/* Menu Footer */
+.menu-footer {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
 .primary-btn, .secondary-btn {
     background: linear-gradient(45deg, #00ff88, #00d4ff);
     color: #1a1a2e;
@@ -327,19 +388,6 @@ select {
     grid-row: 2;
 }
 
-#mobile-controls .pause-mobile {
-    grid-column: 1;
-    grid-row: 1;
-    background: rgba(255, 100, 100, 0.2);
-    border-color: rgba(255, 100, 100, 0.5);
-    color: #ff6464;
-    font-size: 1.2rem;
-}
-
-#mobile-controls .pause-mobile:hover {
-    background: rgba(255, 100, 100, 0.4);
-}
-
 /* Animations */
 @keyframes fadeIn {
     from {
@@ -392,6 +440,10 @@ select {
     #mobile-controls {
         display: grid;
     }
+
+    #pause-btn {
+        display: flex;
+    }
 }
 
 @media (max-width: 480px) {
@@ -406,5 +458,35 @@ select {
     #mobile-controls {
         grid-template-columns: repeat(3, 50px);
         grid-template-rows: repeat(2, 50px);
+    }
+}
+
+/* Mobile - HUD with 2 lines, smaller text */
+@media (max-width: 768px) {
+    #hud {
+        top: 10px;
+        bottom: auto;
+        left: 10px;
+        right: 10px;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 15px;
+        border-radius: 15px;
+    }
+
+    .hud-left, .hud-right {
+        flex-direction: column;
+        gap: 8px;
+        font-size: 0.9rem;
+    }
+
+    #score-display, #high-score-display, #level-display {
+        font-size: 0.85rem;
+    }
+
+    #pause-btn {
+        font-size: 0.9rem;
+        padding: 8px 16px;
     }
 }
