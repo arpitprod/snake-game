@@ -7,7 +7,8 @@ A classic Snake game with modern features, smooth animations, and responsive des
 Built with ❤️ using Claude Code (AI programming assistant). Every tool I create helps me grow as a developer and build my portfolio.
 
 **Support this project:**
-[![Buy Me a Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://buymeacoffee.com/arpitg)
+
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" width="250" height="70"/>](https://buymeacoffee.com/arpitg)
 
 Your contribution helps me continue building tools, learning new technologies, and creating amazing projects for the community!
 
@@ -207,7 +208,8 @@ Every contribution helps make this game better for everyone. 🤝
 I'm building these tools daily to showcase my skills and demonstrate what's possible with AI assistance. Every coffee helps me stay motivated to continue creating and learning!
 
 If you enjoy this project and want to support my journey:
-[![Buy Me a Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://buymeacoffee.com/arpitg)
+
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" width="250" height="70"/>](https://buymeacoffee.com/arpitg)
 
 **Your support lets me:**
 - 🔨 Keep building tools and sharing knowledge
