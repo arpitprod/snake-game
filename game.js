@@ -39,6 +39,7 @@ let currentSpeed = SPEEDS.level1;
 let gameLoop = null;
 let lastUpdateTime = 0;
 let isSoundEnabled = true;
+let baseSpeed = SPEEDS.level1;
 
 // Game Data
 let snake = [];
@@ -51,6 +52,7 @@ let level = 1;
 let direction = { x: 1, y: 0 };
 let nextDirection = { x: 1, y: 0 };
 let isInvincible = false;
+let speedBoostTimer = null;
 let powerUpTimer = null;
 let gridWidth = 20;
 let gridHeight = 20;
@@ -109,6 +111,7 @@ function setupInputHandlers() {
     // Speed selection
     const difficultySelect = document.getElementById('difficulty');
     difficultySelect.addEventListener('change', () => {
+      baseSpeed = SPEEDS[difficultySelect.value];
       currentSpeed = SPEEDS[difficultySelect.value];
     });
 
@@ -233,9 +236,15 @@ function startGame() {
     nextDirection = { x: 1, y: 0 };
     score = 0;
     level = 1;
+    baseSpeed = SPEEDS.level1;
+    currentSpeed = SPEEDS.level1;
     isInvincible = false;
     obstacles = [];
     powerUps = [];
+
+    // Clear any existing timers
+    if (speedBoostTimer) clearTimeout(speedBoostTimer);
+    if (powerUpTimer) clearTimeout(powerUpTimer);
 
     // Update UI
     updateHUD();
@@ -313,7 +322,9 @@ function moveSnake() {
         // Level up every 50 points
         if (score > 0 && score % 50 === 0) {
             level++;
+            baseSpeed = currentSpeed;
             currentSpeed = Math.max(50, currentSpeed - 10);
+            generateObstacles(); // Generate more obstacles when level increases
         }
 
         updateHUD();
@@ -333,7 +344,10 @@ function moveSnake() {
 // Spawn Food
 function spawnFood() {
     let validPosition = false;
-    while (!validPosition) {
+    let attempts = 0;
+    const maxAttempts = 1000; // Prevent infinite loops
+
+    while (!validPosition && attempts < maxAttempts) {
         food = {
             x: Math.floor(Math.random() * gridWidth),
             y: Math.floor(Math.random() * gridHeight),
@@ -354,6 +368,21 @@ function spawnFood() {
                 break;
             }
         }
+
+        // Check if on power-ups
+        for (let powerUp of powerUps) {
+            if (powerUp.x === food.x && powerUp.y === food.y) {
+                validPosition = false;
+                break;
+            }
+        }
+
+        attempts++;
+    }
+
+    // Fallback: if no valid position found, use last attempt
+    if (!validPosition) {
+        console.warn('Could not find valid food position, using last attempt');
     }
 
     // 10% chance to spawn power-up
@@ -365,31 +394,60 @@ function spawnFood() {
 // Spawn Power-up
 function spawnPowerUp() {
     let validPosition = false;
-    while (!validPosition) {
+    let attempts = 0;
+    const maxAttempts = 100;
+
+    while (!validPosition && attempts < maxAttempts) {
         const type = Math.random() < 0.5 ? 'speed' : 'invincible';
-        powerUps.push({
-            x: Math.floor(Math.random() * gridWidth),
-            y: Math.floor(Math.random() * gridHeight),
-            type: type,
-            spawnedAt: Date.now()
-        });
+
+        // Generate random position
+        const newX = Math.floor(Math.random() * gridWidth);
+        const newY = Math.floor(Math.random() * gridHeight);
 
         validPosition = true;
+
+        // Don't spawn on snake body
         for (let segment of snake) {
-            if (segment.x === powerUps[powerUps.length - 1].x &&
-                segment.y === powerUps[powerUps.length - 1].y) {
+            if (segment.x === newX && segment.y === newY) {
                 validPosition = false;
                 break;
             }
         }
+
+        // Don't spawn on obstacles
         for (let obstacle of obstacles) {
-            if (obstacle.x === powerUps[powerUps.length - 1].x &&
-                obstacle.y === powerUps[powerUps.length - 1].y) {
+            if (obstacle.x === newX && obstacle.y === newY) {
                 validPosition = false;
                 break;
             }
         }
+
+        // Don't spawn on existing power-ups (check against all power-ups EXCEPT last one we're about to add)
+        for (let i = 0; i < powerUps.length - 1; i++) {
+            if (powerUps[i].x === newX && powerUps[i].y === newY) {
+                validPosition = false;
+                break;
+            }
+        }
+
+        if (validPosition) {
+            // Position is valid, add power-up
+            powerUps.push({
+                x: newX,
+                y: newY,
+                type: type,
+                spawnedAt: Date.now()
+            });
+        }
+
+        attempts++;
     }
+
+    // Remove old power-ups after 10 seconds (30000ms)
+    // This prevents accumulation when player doesn't reach them
+    setTimeout(() => {
+        powerUps = powerUps.filter(p => Date.now() - p.spawnedAt < 30000);
+    }, 5000);
 }
 
 // Show Power-up Notification
@@ -433,7 +491,12 @@ function activatePowerUp(powerUp) {
     playSound('powerup');
 
     if (powerUp.type === 'speed') {
-        currentSpeed = SPEEDS.level1;
+        // Boost speed: reduce delay to make snake faster
+        if (speedBoostTimer) clearTimeout(speedBoostTimer);
+        currentSpeed = Math.max(50, baseSpeed - 30);
+        speedBoostTimer = setTimeout(() => {
+            currentSpeed = baseSpeed;
+        }, 5000);
     } else if (powerUp.type === 'invincible') {
         isInvincible = true;
         if (powerUpTimer) clearTimeout(powerUpTimer);
@@ -449,25 +512,68 @@ function activatePowerUp(powerUp) {
 // Generate Obstacles
 function generateObstacles() {
     obstacles = [];
-    const numObstacles = level * 2;
+
+    // Calculate obstacle count based on screen size
+    // Mobile screens: fewer obstacles, Desktop: more obstacles
+    const totalCells = gridWidth * gridHeight;
+    const isMobile = canvas.width < 500 || canvas.height < 500;
+    const baseObstacles = isMobile ? 3 : 5; // Fewer obstacles on mobile
+    const maxObstacles = Math.floor(totalCells * 0.08); // Maximum 8% on mobile, 15% on desktop
+
+    // Adjust obstacles based on level but keep it reasonable
+    let numObstacles = Math.min(
+        baseObstacles + (level - 1) * 1, // Add 1 per level
+        maxObstacles
+    );
 
     for (let i = 0; i < numObstacles; i++) {
         let validPosition = false;
-        while (!validPosition) {
-            obstacles.push({
+        let attempts = 0;
+        const maxAttempts = 100;
+
+        while (!validPosition && attempts < maxAttempts) {
+            const newObstacle = {
                 x: Math.floor(Math.random() * gridWidth),
                 y: Math.floor(Math.random() * gridHeight)
-            });
+            };
 
             validPosition = true;
             // Don't spawn near snake head
             for (let segment of snake) {
-                if (segment.x === obstacles[obstacles.length - 1].x &&
-                    segment.y === obstacles[obstacles.length - 1].y) {
+                if (segment.x === newObstacle.x && segment.y === newObstacle.y) {
                     validPosition = false;
                     break;
                 }
             }
+            // Don't spawn on existing obstacles
+            for (let obstacle of obstacles) {
+                if (obstacle.x === newObstacle.x && obstacle.y === newObstacle.y) {
+                    validPosition = false;
+                    break;
+                }
+            }
+            // Don't spawn on existing power-ups
+            for (let powerUp of powerUps) {
+                if (powerUp.x === newObstacle.x && powerUp.y === newObstacle.y) {
+                    validPosition = false;
+                    break;
+                }
+            }
+            // Don't spawn near edges (keep some free space)
+            const distFromEdge = Math.min(
+                newObstacle.x,
+                gridWidth - 1 - newObstacle.x,
+                newObstacle.y,
+                gridHeight - 1 - newObstacle.y
+            );
+            if (distFromEdge < 3) {
+                validPosition = false;
+            }
+
+            if (validPosition) {
+                obstacles.push(newObstacle);
+            }
+            attempts++;
         }
     }
 }
@@ -516,6 +622,8 @@ function togglePause() {
 function backToMenu() {
     gameState = GAME_STATES.MENU;
     cancelAnimationFrame(gameLoop);
+    if (speedBoostTimer) clearTimeout(speedBoostTimer);
+    if (powerUpTimer) clearTimeout(powerUpTimer);
     gameOverScreen.classList.add('hidden');
     mobileControls.classList.add('hidden');
     renderStartMenu();
