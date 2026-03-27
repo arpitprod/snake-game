@@ -292,6 +292,14 @@ function moveSnake() {
         return;
     }
 
+    // Check obstacle collision BEFORE adding head (this is critical!)
+    for (let obstacle of obstacles) {
+        if (head.x === obstacle.x && head.y === obstacle.y) {
+            handleGameOver();
+            return;
+        }
+    }
+
     // Check self collision (unless invincible)
     if (!isInvincible) {
         for (let segment of snake) {
@@ -330,14 +338,6 @@ function moveSnake() {
         updateHUD();
     } else {
         snake.pop();
-    }
-
-    // Check obstacle collision
-    for (let obstacle of obstacles) {
-        if (head.x === obstacle.x && head.y === obstacle.y) {
-            handleGameOver();
-            return;
-        }
     }
 }
 
@@ -659,15 +659,7 @@ function render() {
 
     // Draw obstacles
     for (let obstacle of obstacles) {
-        ctx.fillStyle = COLORS.obstacle;
-        ctx.fillRect(
-            obstacle.x * GRID_SIZE + 2,
-            obstacle.y * GRID_SIZE + 2,
-            GRID_SIZE - 4,
-            GRID_SIZE - 4
-        );
-
-        // Add visual detail
+        // Add visual detail (shadow effect)
         ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
         ctx.fillRect(
             obstacle.x * GRID_SIZE + 4,
@@ -675,9 +667,37 @@ function render() {
             GRID_SIZE - 8,
             GRID_SIZE - 8
         );
+
+        // Obstacle body
+        ctx.fillStyle = COLORS.obstacle;
+        ctx.fillRect(
+            obstacle.x * GRID_SIZE + 2,
+            obstacle.y * GRID_SIZE + 2,
+            GRID_SIZE - 4,
+            GRID_SIZE - 4
+        );
     }
 
-    // Draw power-ups
+    // Draw food (draw before power-ups to ensure visibility)
+    const foodPulse = Math.sin(Date.now() / 200) * 0.2 + 0.8;
+    ctx.fillStyle = COLORS.food;
+    ctx.beginPath();
+    ctx.arc(
+        food.x * GRID_SIZE + GRID_SIZE / 2,
+        food.y * GRID_SIZE + GRID_SIZE / 2,
+        (GRID_SIZE / 3) * foodPulse,
+        0,
+        Math.PI * 2
+    );
+    ctx.fill();
+
+    // Food glow
+    ctx.shadowColor = COLORS.food;
+    ctx.shadowBlur = 15;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Draw power-ups (draw after food so they appear on top)
     const now = Date.now();
     for (let powerUp of powerUps) {
         const pulse = Math.sin((now - powerUp.spawnedAt) / 200) * 0.2 + 0.8;
@@ -704,25 +724,6 @@ function render() {
         ctx.fill();
         ctx.shadowBlur = 0;
     }
-
-    // Draw food
-    const foodPulse = Math.sin(Date.now() / 200) * 0.2 + 0.8;
-    ctx.fillStyle = COLORS.food;
-    ctx.beginPath();
-    ctx.arc(
-        food.x * GRID_SIZE + GRID_SIZE / 2,
-        food.y * GRID_SIZE + GRID_SIZE / 2,
-        (GRID_SIZE / 3) * foodPulse,
-        0,
-        Math.PI * 2
-    );
-    ctx.fill();
-
-    // Food glow
-    ctx.shadowColor = COLORS.food;
-    ctx.shadowBlur = 15;
-    ctx.fill();
-    ctx.shadowBlur = 0;
 
     // Draw snake
     for (let i = snake.length - 1; i >= 0; i--) {
