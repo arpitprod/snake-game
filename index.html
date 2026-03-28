@@ -7,25 +7,36 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Main Game Container -->
+    <!-- Main Game Container - Vertical Stack Layout -->
     <div id="game-container">
-        <!-- Canvas for Game Rendering -->
-        <canvas id="gameCanvas"></canvas>
-
         <!-- Heads Up Display -->
         <div id="hud">
-            <div class="hud-left">
+            <div class="hud-row">
                 <span id="score-display">Score: 0</span>
                 <span id="high-score-display">High Score: 0</span>
             </div>
-            <div class="hud-right">
+            <div class="hud-row">
                 <span id="level-display">Level: 1</span>
                 <button id="pause-btn" class="hud-btn">⏸ Pause</button>
             </div>
         </div>
 
+        <!-- Canvas Area -->
+        <div id="canvas-container">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+
+        <!-- Mobile Controls -->
+        <div id="mobile-controls" class="mobile-controls hidden">
+            <button class="control-btn up" data-direction="up">▲</button>
+            <button class="control-btn left" data-direction="left">◀</button>
+            <button class="control-btn down" data-direction="down">▼</button>
+            <button class="control-btn right" data-direction="right">▶</button>
+        </div>
+
         <!-- Power-up Notifications -->
         <div id="powerup-notifications" class="powerup-notifications"></div>
+    </div>
 
         <!-- Start Menu -->
         <div id="start-menu" class="menu-overlay">
@@ -96,14 +107,6 @@
                     <button id="pause-quit" class="secondary-btn">Quit</button>
                 </div>
             </div>
-        </div>
-
-        <!-- Mobile Controls -->
-        <div id="mobile-controls" class="mobile-controls hidden">
-            <button class="control-btn up" data-direction="up">▲</button>
-            <button class="control-btn left" data-direction="left">◀</button>
-            <button class="control-btn down" data-direction="down">▼</button>
-            <button class="control-btn right" data-direction="right">▶</button>
         </div>
 
     </div>

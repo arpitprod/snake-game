@@ -1,5 +1,5 @@
 // Game Constants
-const GRID_SIZE = 20;
+const GRID_SIZE = 15;
 const COLORS = {
     snakeHead: '#00ff88',
     snakeBody: '#00cc6a',
@@ -76,16 +76,53 @@ function init() {
     setupInputHandlers();
     loadHighScore();
     renderStartMenu();
+
+    // Check for mobile device
+    const isMobile = window.innerWidth < 768 || 'ontouchstart' in window;
+    if (isMobile) {
+        mobileControls.classList.remove('hidden');
+    }
 }
 
 // Resize Canvas
 function resizeCanvas() {
-    const maxSize = Math.min(window.innerWidth - 40, window.innerHeight - 100);
-    const size = Math.floor(maxSize / GRID_SIZE) * GRID_SIZE;
-    canvas.width = size;
-    canvas.height = size;
-    canvas.style.width = size + 'px';
-    canvas.style.height = size + 'px';
+    // For mobile, use rectangular canvas with more height
+    // For desktop, keep square for better gameplay experience
+    const isMobile = window.innerWidth < 768 || 'ontouchstart' in window;
+
+    if (isMobile) {
+        // Mobile: More height, slightly more width
+        // Leave space for header (60px), hud (70px), controls (80px), and notifications
+        const headerHeight = 60;
+        const hudHeight = 70;
+        const controlsHeight = 120;
+        const notificationsHeight = 60;
+
+        const availableHeight = window.innerHeight - headerHeight - hudHeight - controlsHeight - notificationsHeight - 20;
+        const maxWidth = window.innerWidth - 10;
+
+        // Width: Use full available width minus small margin
+        const width = Math.floor(maxWidth / GRID_SIZE) * GRID_SIZE;
+
+        // Height: Use full available height
+        const height = Math.floor(availableHeight / GRID_SIZE) * GRID_SIZE;
+
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+    } else {
+        // Desktop: Keep square
+        const headerHeight = 80;
+        const hudHeight = 60;
+        const availableHeight = window.innerHeight - headerHeight - hudHeight - 20;
+        const maxSize = Math.min(window.innerWidth - 40, availableHeight);
+        const size = Math.floor(maxSize / GRID_SIZE) * GRID_SIZE;
+        canvas.width = size;
+        canvas.height = size;
+        canvas.style.width = size + 'px';
+        canvas.style.height = size + 'px';
+    }
 
     // Calculate grid dimensions based on canvas size
     gridWidth = Math.floor(canvas.width / GRID_SIZE);
@@ -517,7 +554,7 @@ function generateObstacles() {
     // Mobile screens: fewer obstacles, Desktop: more obstacles
     const totalCells = gridWidth * gridHeight;
     const isMobile = canvas.width < 500 || canvas.height < 500;
-    const baseObstacles = isMobile ? 3 : 5; // Fewer obstacles on mobile
+    const baseObstacles = isMobile ? 0 : 5; // Fewer obstacles on mobile
     const maxObstacles = Math.floor(totalCells * 0.08); // Maximum 8% on mobile, 15% on desktop
 
     // Adjust obstacles based on level but keep it reasonable
